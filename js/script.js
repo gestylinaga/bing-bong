@@ -23,6 +23,20 @@ let player2 = {
     height: playerHeight,
     velocity: playerVelocity,
 };
+// Ball
+const ballWidth = 10;
+const ballHeight = 10;
+let ball = {
+    x: boardWidth / 2 - ballWidth,
+    y: boardHeight / 2 - ballHeight,
+    width: ballWidth,
+    height: ballHeight,
+    velocityX: 1,
+    velocityY: 1,
+};
+// Player Scores
+let player1Score = 0;
+let player2Score = 0;
 window.onload = () => {
     // Draw Board
     board = document.getElementById('board');
@@ -52,6 +66,45 @@ function update() {
         player2.y = nextPlayer2Pos;
     }
     context.fillRect(player2.x, player2.y, player2.width, player2.height);
+    // Draw Ball
+    context.fillStyle = '#fff';
+    ball.x += ball.velocityX;
+    ball.y += ball.velocityY;
+    context.fillRect(ball.x, ball.y, ball.width, ball.height);
+    // Ball / Wall Collision
+    if (ball.y <= 0 || ball.y + ball.height >= board.height) {
+        ball.velocityY *= -1; // reverse direction
+        // TODO: sound goes here (bing)
+    }
+    // Ball / Paddle Collision
+    if (detectCollision(ball, player1)) {
+        if (ball.x <= player1.x + player1.width) {
+            // left side of ball collides with right side of player1
+            ball.velocityX *= -1; // reverse direction
+            // TODO: sound goes here (bong)
+        }
+    }
+    else if (detectCollision(ball, player2)) {
+        if (ball.x + ball.width >= player2.x) {
+            // right side of ball collides with left side of player2
+            ball.velocityX *= -1; // reverse direction
+            // TODO: sound goes here (bong)
+        }
+    }
+    // Point Scored / Reset Ball
+    if (ball.x < 0) {
+        // TODO: sound goes here (FYL)
+        player2Score++;
+        resetBall(1); // Towards player2
+    }
+    else if (ball.x + ball.width > boardWidth) {
+        player1Score++;
+        resetBall(-1); // Towards player1
+    }
+    // Draw Scores
+    context.font = '45px system-ui';
+    context.fillText(player1Score, boardWidth / 5, 45);
+    context.fillText(player2Score, boardWidth * 4 / 5 - 45, 45);
 }
 function outOfBounds(yPos) {
     return (yPos < 0 || yPos + playerHeight > boardHeight);
@@ -72,14 +125,32 @@ function movePlayer(e) {
         player2.velocity = 3;
     }
 }
+function detectCollision(a, b) {
+    return a.x < b.x + b.width && // a's top left corner !reach b's top right
+        a.x + a.width > b.x && // a's top right corner passes b's top left
+        a.y < b.y + b.height && // a' top left corner !reach b's bottom left
+        a.y + a.height > b.y; // a's bottom left corner passes b's top left
+}
+function resetBall(direction) {
+    ball = {
+        x: boardWidth / 2 - ballWidth,
+        y: boardHeight / 2 - ballHeight,
+        width: ballWidth,
+        height: ballHeight,
+        velocityX: direction,
+        velocityY: 2,
+    };
+}
 const startBtn = document.getElementById('start');
 startBtn.addEventListener('click', () => {
     startBtn.style.display = 'none';
+    board.style.cursor = 'none';
     startGame();
 });
 function startGame() {
     requestAnimationFrame(update);
     document.addEventListener('keyup', movePlayer);
+    // TODO: sound goes here ('Live in Coney Island!')
 }
 console.log('Bing Bong');
 console.log('Fuck Ya Life!');
