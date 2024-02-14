@@ -5,7 +5,6 @@ Classic 2-player Pong with *"FYL"* sound effects
 
 <!-- TODO
   - Finish base game
-  - favicon
   - sound effects
   - volume slider / test audio
 -->
