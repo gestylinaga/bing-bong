@@ -35,13 +35,16 @@ let ball = {
   y: boardHeight/2 - ballHeight,
   width: ballWidth,
   height: ballHeight,
-  velocityX: 1,
+  velocityX: 2,
   velocityY: 1,
 }
 
 // Player Scores
 let player1Score = 0;
 let player2Score = 0;
+
+// Audio Volume
+let volume = 0.5;
 
 window.onload = (): void => {
   // Draw Board
@@ -87,30 +90,37 @@ function update(): void {
   // Ball / Wall Collision
   if (ball.y <= 0 || ball.y + ball.height >= board.height) {
     ball.velocityY *= -1; // reverse direction
-    // TODO: sound goes here (bing)
+    collisionSound();
   }
 
   // Ball / Paddle Collision
   if (detectCollision(ball, player1)) {
-    if (ball.x <= player1.x + player1.width) {
+    if (ball.x < player1.x + player1.width) {
       // left side of ball collides with right side of player1
       ball.velocityX *= -1; // reverse direction
-      // TODO: sound goes here (bong)
+      collisionSound();
     }
   } else if (detectCollision(ball, player2)) {
-    if (ball.x + ball.width >= player2.x) {
+    if (ball.x + ball.width > player2.x) {
       // right side of ball collides with left side of player2
       ball.velocityX *= -1; // reverse direction
-      // TODO: sound goes here (bong)
+      collisionSound();
     }
   }
 
   // Point Scored / Reset Ball
   if (ball.x < 0) {
-    // TODO: sound goes here (FYL)
+    const fyl: HTMLAudioElement = new Audio('./audio/fyl.mp3');
+    fyl.volume = volume;
+    fyl.play();
+
     player2Score++;
     resetBall(1); // Towards player2
   } else if (ball.x + ball.width > boardWidth) {
+    const fyl: HTMLAudioElement = new Audio('./audio/fyl.mp3');
+    fyl.volume = volume;
+    fyl.play();
+
     player1Score++;
     resetBall(-1); // Towards player1
   }
@@ -142,10 +152,26 @@ function movePlayer(e: KeyboardEvent): void {
 }
 
 function detectCollision(a: any, b: any): boolean {
-  return a.x < b.x + b.width &&  // a's top left corner !reach b's top right
-         a.x + a.width > b.x &&  // a's top right corner passes b's top left
-         a.y < b.y + b.height && // a' top left corner !reach b's bottom left
-         a.y + a.height > b.y;   // a's bottom left corner passes b's top left
+  return a.x <= b.x + b.width &&  // a's top left corner !reach b's top right
+         a.x + a.width >= b.x &&  // a's top right corner passes b's top left
+         a.y <= b.y + b.height && // a' top left corner !reach b's bottom left
+         a.y + a.height >= b.y;   // a's bottom left corner passes b's top left
+}
+
+let currentSound = 1;
+function collisionSound(): void {
+  const bing = new Audio('./audio/bing.mp3');
+  const bong = new Audio('./audio/bong.mp3');
+
+  if (currentSound === 1) {
+    bing.volume = volume;
+    bing.play();
+  } else {
+    bong.volume = volume;
+    bong.play();
+  }
+
+  currentSound *= -1;
 }
 
 function resetBall(direction: number): void {
@@ -169,7 +195,9 @@ startBtn.addEventListener('click', () => {
 function startGame(): void {
   requestAnimationFrame(update);
   document.addEventListener('keyup', movePlayer);
-  // TODO: sound goes here ('Live in Coney Island!')
+  const liveFromConey: HTMLAudioElement = new Audio('./audio/liveFromConey.mp3');
+  liveFromConey.volume = volume;
+  liveFromConey.play();
 }
 
 console.log('Bing Bong');

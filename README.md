@@ -5,7 +5,6 @@ Classic 2-player Pong with *"FYL"* sound effects
 
 <!-- TODO
   - fix paddle collision detection
-  - sound effects
   - volume slider / test audio
   - add win condition (5 points)
   - add reset game button (reuse/rename start button)
