@@ -41,3 +41,30 @@ h1 {
     color: #fff;
   }
 }
+
+#volume {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: .5rem;
+}
+
+#vol-ctrl {
+  display: flex;
+  gap: 1rem;
+
+  & > button {
+    padding-inline: .5rem;
+    height: 2rem;
+    font-size: 1.3rem;
+  }
+}
+
+#display {
+  width: 3rem;
+  border: 1px solid #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

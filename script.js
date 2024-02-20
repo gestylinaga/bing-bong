@@ -175,5 +175,45 @@ function startGame() {
     liveFromConey.volume = volume;
     liveFromConey.play();
 }
+// Volume controls
+const minus = document.getElementById('decrease');
+const plus = document.getElementById('increase');
+const volDisplay = document.getElementById('display');
+volDisplay.innerText = `${volume * 100}%`;
+function decreaseSound() {
+    if (volume > 0) {
+        volume = (parseFloat(volume) - 0.1).toFixed(2);
+    }
+    else {
+        volume = 0;
+    }
+    console.log(volume);
+    updateVolDisplay();
+}
+function increaseSound() {
+    if (volume < 1) {
+        volume = (parseFloat(volume) + 0.1).toFixed(2);
+    }
+    else {
+        volume = 1;
+    }
+    console.log(volume);
+    updateVolDisplay();
+}
+function updateVolDisplay() {
+    volDisplay.innerText = `${Math.fround(volume * 100)}%`;
+}
+minus.addEventListener('click', () => {
+    decreaseSound();
+    const bingBeep = new Audio('./audio/bingBeep.mp3');
+    bingBeep.volume = volume;
+    bingBeep.play();
+});
+plus.addEventListener('click', () => {
+    increaseSound();
+    const bongBeep = new Audio('./audio/bongBeep.mp3');
+    bongBeep.volume = volume;
+    bongBeep.play();
+});
 console.log('Bing Bong');
 console.log('Fuck Ya Life!');
